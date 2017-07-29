@@ -6,7 +6,7 @@
   "module": "es/index.js",
   "jsnext:main": "es/index.js",
   "scripts": {
-    "start": "npm build"
+    "start": "npm build",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
     "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
     "build:umd": "cross-env BABEL_ENV=rollup NODE_ENV=development rollup -c -o dist/react-redux.js",
