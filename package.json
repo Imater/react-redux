@@ -1,11 +1,12 @@
 {
   "name": "react-redux",
-  "version": "5.0.5",
+  "version": "5.0.77",
   "description": "Official React bindings for Redux",
   "main": "./lib/index.js",
   "module": "es/index.js",
   "jsnext:main": "es/index.js",
   "scripts": {
+    "start": "npm build"
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
     "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
     "build:umd": "cross-env BABEL_ENV=rollup NODE_ENV=development rollup -c -o dist/react-redux.js",
@@ -21,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/reactjs/react-redux.git"
+    "url": "git+https://github.com/Imater/react-redux.git"
   },
   "files": [
     "dist",
@@ -120,5 +121,9 @@
   "nyc": {
     "sourceMap": false,
     "instrument": false
+  },
+  "directories": {
+    "doc": "docs",
+    "test": "test"
   }
 }
