@@ -57,7 +57,7 @@ export function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProp
   function handleNewPropsAndNewState() {
     stateProps = mapStateToProps(state, ownProps);
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (typeof console !== 'undefined' && process.env.NODE_ENV !== 'production') {
       var sameStateProps = mapStateToProps(state, ownProps);
 
       if (!shallowEqual(stateProps, sameStateProps)) {
