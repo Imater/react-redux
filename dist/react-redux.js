@@ -109,45 +109,43 @@ var invariant_1 = invariant;
 var warning = emptyFunction_1;
 
 {
-  (function () {
-    var printWarning = function printWarning(format) {
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
+  var printWarning = function printWarning(format) {
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    var argIndex = 0;
+    var message = 'Warning: ' + format.replace(/%s/g, function () {
+      return args[argIndex++];
+    });
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  };
+
+  warning = function warning(condition, format) {
+    if (format === undefined) {
+      throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+    }
+
+    if (format.indexOf('Failed Composite propType: ') === 0) {
+      return; // Ignore CompositeComponent proptype check.
+    }
+
+    if (!condition) {
+      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+        args[_key2 - 2] = arguments[_key2];
       }
 
-      var argIndex = 0;
-      var message = 'Warning: ' + format.replace(/%s/g, function () {
-        return args[argIndex++];
-      });
-      if (typeof console !== 'undefined') {
-        console.error(message);
-      }
-      try {
-        // --- Welcome to debugging React ---
-        // This error was thrown as a convenience so that you can use this stack
-        // to find the callsite that caused this warning to fire.
-        throw new Error(message);
-      } catch (x) {}
-    };
-
-    warning = function warning(condition, format) {
-      if (format === undefined) {
-        throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
-      }
-
-      if (format.indexOf('Failed Composite propType: ') === 0) {
-        return; // Ignore CompositeComponent proptype check.
-      }
-
-      if (!condition) {
-        for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-          args[_key2 - 2] = arguments[_key2];
-        }
-
-        printWarning.apply(undefined, [format].concat(args));
-      }
-    };
-  })();
+      printWarning.apply(undefined, [format].concat(args));
+    }
+  };
 }
 
 var warning_1 = warning;
@@ -711,7 +709,7 @@ var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
   return ReactPropTypes;
 };
 
-var index = createCommonjsModule(function (module) {
+var propTypes = createCommonjsModule(function (module) {
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -740,17 +738,17 @@ var index = createCommonjsModule(function (module) {
 }
 });
 
-var subscriptionShape = index.shape({
-  trySubscribe: index.func.isRequired,
-  tryUnsubscribe: index.func.isRequired,
-  notifyNestedSubs: index.func.isRequired,
-  isSubscribed: index.func.isRequired
+var subscriptionShape = propTypes.shape({
+  trySubscribe: propTypes.func.isRequired,
+  tryUnsubscribe: propTypes.func.isRequired,
+  notifyNestedSubs: propTypes.func.isRequired,
+  isSubscribed: propTypes.func.isRequired
 });
 
-var storeShape = index.shape({
-  subscribe: index.func.isRequired,
-  dispatch: index.func.isRequired,
-  getState: index.func.isRequired
+var storeShape = propTypes.shape({
+  subscribe: propTypes.func.isRequired,
+  dispatch: propTypes.func.isRequired,
+  getState: propTypes.func.isRequired
 });
 
 /**
@@ -902,7 +900,7 @@ function createProvider() {
 
   Provider.propTypes = {
     store: storeShape.isRequired,
-    children: index.element.isRequired
+    children: propTypes.element.isRequired
   };
   Provider.childContextTypes = (_Provider$childContex = {}, _Provider$childContex[storeKey] = storeShape.isRequired, _Provider$childContex[subscriptionKey] = subscriptionShape, _Provider$childContex);
 
@@ -937,7 +935,7 @@ var KNOWN_STATICS = {
 
 var isGetOwnPropertySymbolsAvailable = typeof Object.getOwnPropertySymbols === 'function';
 
-var index$1 = function hoistNonReactStatics(targetComponent, sourceComponent, customStatics) {
+var hoistNonReactStatics = function hoistNonReactStatics(targetComponent, sourceComponent, customStatics) {
     if (typeof sourceComponent !== 'string') { // don't hoist over string (html) components
         var keys = Object.getOwnPropertyNames(sourceComponent);
 
@@ -1346,14 +1344,14 @@ selectorFactory) {
         // We are hot reloading!
         if (this.version !== version) {
           this.version = version;
-          this.initSelector
+          this.initSelector();
 
           // If any connected descendants don't hot reload (and resubscribe in the process), their
           // listeners will be lost when we unsubscribe. Unfortunately, by copying over all
           // listeners, this does mean that the old versions of connected descendants will still be
           // notified of state changes; however, their onStateChange function is a no-op so this
           // isn't a huge deal.
-          ();var oldListeners = [];
+          var oldListeners = [];
 
           if (this.subscription) {
             oldListeners = this.subscription.listeners.get();
@@ -1370,7 +1368,7 @@ selectorFactory) {
       };
     }
 
-    return index$1(Connect, WrappedComponent);
+    return hoistNonReactStatics(Connect, WrappedComponent);
   };
 }
 
