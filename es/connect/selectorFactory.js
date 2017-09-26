@@ -1,5 +1,19 @@
 import shallowEqual from '../utils/shallowEqual';
 
+var isConsolePresented = function isConsolePresented() {
+  return typeof console !== 'undefined';
+};
+var isProduction = function isProduction() {
+  return process.env.NODE_ENV === 'production';
+};
+var not = function not(c) {
+  return !c;
+};
+var isReduxForm = function isReduxForm(wrappedComponentName) {
+  return (/Form|ConnectedFields/.test(wrappedComponentName)
+  );
+};
+
 function _objectWithoutProperties(obj, keys) {
   var target = {};for (var i in obj) {
     if (keys.indexOf(i) >= 0) continue;if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;target[i] = obj[i];
@@ -13,6 +27,11 @@ export function impureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToPr
     return mergeProps(mapStateToProps(state, ownProps), mapDispatchToProps(dispatch, ownProps), ownProps);
   };
 }
+
+var loggingAvailable = function loggingAvailable(ref) {
+  var wrappedComponentName = ref && ref.wrappedComponentName && ref.wrappedComponentName || '';
+  return isConsolePresented() && not(isProduction()) && not(isReduxForm(wrappedComponentName));
+};
 
 export function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProps, mergeProps, dispatch, _ref) {
   var areStatesEqual = _ref.areStatesEqual,
@@ -31,7 +50,7 @@ export function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProp
     ownProps = firstOwnProps;
     stateProps = mapStateToProps(state, ownProps);
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (loggingAvailable(_ref)) {
       var sameStateProps = mapStateToProps(state, ownProps);
 
       if (!shallowEqual(stateProps, sameStateProps)) {
@@ -57,7 +76,7 @@ export function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProp
   function handleNewPropsAndNewState() {
     stateProps = mapStateToProps(state, ownProps);
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (loggingAvailable(_ref)) {
       var sameStateProps = mapStateToProps(state, ownProps);
 
       if (!shallowEqual(stateProps, sameStateProps)) {
@@ -84,7 +103,7 @@ export function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProp
     if (mapStateToProps.dependsOnOwnProps) {
       stateProps = mapStateToProps(state, ownProps);
 
-      if (process.env.NODE_ENV !== 'production') {
+      if (loggingAvailable(_ref)) {
         var sameStateProps = mapStateToProps(state, ownProps);
 
         if (!shallowEqual(stateProps, sameStateProps)) {
@@ -113,7 +132,7 @@ export function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProp
     var statePropsChanged = !areStatePropsEqual(nextStateProps, stateProps);
     stateProps = nextStateProps;
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (loggingAvailable(_ref)) {
       var sameStateProps = mapStateToProps(state, ownProps);
 
       if (!shallowEqual(stateProps, sameStateProps)) {

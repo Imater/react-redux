@@ -1,5 +1,10 @@
 import shallowEqual from '../utils/shallowEqual';
 
+const isConsolePresented = () => (typeof console !== 'undefined')
+const isProduction = () => process.env.NODE_ENV === 'production'
+const not = (c) => !c
+const isReduxForm = wrappedComponentName => /Form|ConnectedFields/.test(wrappedComponentName)
+
 function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 import verifySubselectors from './verifySubselectors';
@@ -9,6 +14,11 @@ export function impureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToPr
     return mergeProps(mapStateToProps(state, ownProps), mapDispatchToProps(dispatch, ownProps), ownProps);
   };
 }
+
+const loggingAvailable = (ref) => {
+  const wrappedComponentName = (ref && ref.wrappedComponentName && ref.wrappedComponentName) || ''
+  return isConsolePresented() && not(isProduction()) && not(isReduxForm(wrappedComponentName))
+};
 
 export function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProps, mergeProps, dispatch, _ref) {
   var areStatesEqual = _ref.areStatesEqual,
@@ -27,7 +37,7 @@ export function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProp
     ownProps = firstOwnProps;
     stateProps = mapStateToProps(state, ownProps);
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (loggingAvailable(_ref)) {
       var sameStateProps = mapStateToProps(state, ownProps);
 
       if (!shallowEqual(stateProps, sameStateProps)) {
@@ -53,7 +63,7 @@ export function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProp
   function handleNewPropsAndNewState() {
     stateProps = mapStateToProps(state, ownProps);
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (loggingAvailable(_ref)) {
       var sameStateProps = mapStateToProps(state, ownProps);
 
       if (!shallowEqual(stateProps, sameStateProps)) {
@@ -80,7 +90,7 @@ export function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProp
     if (mapStateToProps.dependsOnOwnProps) {
       stateProps = mapStateToProps(state, ownProps);
 
-      if (process.env.NODE_ENV !== 'production') {
+      if (loggingAvailable(_ref)) {
         var sameStateProps = mapStateToProps(state, ownProps);
 
         if (!shallowEqual(stateProps, sameStateProps)) {
@@ -109,7 +119,7 @@ export function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProp
     var statePropsChanged = !areStatePropsEqual(nextStateProps, stateProps);
     stateProps = nextStateProps;
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (loggingAvailable(_ref)) {
       var sameStateProps = mapStateToProps(state, ownProps);
 
       if (!shallowEqual(stateProps, sameStateProps)) {
